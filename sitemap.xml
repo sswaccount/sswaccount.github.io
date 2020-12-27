@@ -1,0 +1,30 @@
+<search>
+    
+     <entry>
+        <title>xxxxxxx</title>
+        <url>http://lanlingzi.cn/post/hello/</url>
+        <categories>
+          <category>技术</category>
+        </categories>
+        <tags>
+          <tag>Rust</tag><tag>Programing</tag>
+        </tags>
+        <content type="html"> hello 测试1
+hugo 测试2
+</content>
+    </entry>
+    
+     <entry>
+        <title>xxxxxxx</title>
+        <url>http://lanlingzi.cn/post/%E7%A7%AF%E5%88%86%E7%AC%94%E8%AE%B0/</url>
+        <categories>
+          <category>笔记</category>
+        </categories>
+        <tags>
+          <tag>积分</tag><tag>数学分析</tag>
+        </tags>
+        <content type="html"> ddsadas
+</content>
+    </entry>
+    
+</search>
