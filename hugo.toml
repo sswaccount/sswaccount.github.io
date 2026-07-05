@@ -1,0 +1,4 @@
+baseURL = 'https://sswaccount.github.io/'
+locale = 'zh-cn'
+title = 'SswSpace'
+theme = 'hugo-theme-stack'
