@@ -7,9 +7,20 @@ export HUGO_CACHEDIR="${HUGO_CACHEDIR:-$PWD/resources/_gen}"
 usage() {
   cat <<'EOF'
 Usage:
-  ./build          Start local Hugo preview
-  ./build --show   Start local Hugo preview
-  ./build --upload Build, commit changes, and push current branch
+  ./build                         Start local Hugo preview
+  ./build --show                  Start local Hugo preview
+  ./build --upload                Build, commit changes, and push current branch
+  ./build --load NOTE.md          Load an Obsidian note, then preview locally
+  ./build --load NOTE.md --show   Load an Obsidian note, then preview locally
+  ./build --load NOTE.md --upload Load an Obsidian note, then commit and push
+  ./build --reload NOTE.md        Reload an Obsidian note, then preview locally
+  ./build --reload NOTE.md --show Reload an Obsidian note, then preview locally
+  ./build --reload NOTE.md --upload
+                                  Reload an Obsidian note, then commit and push
+  ./build --unload NOTE.md        Remove a loaded Obsidian note from the blog
+  ./build --unload NOTE.md --show Remove a loaded note, then preview locally
+  ./build --unload NOTE.md --upload
+                                  Remove a loaded note, then commit and push
 EOF
 }
 
@@ -24,10 +35,50 @@ current_branch() {
   git branch --show-current
 }
 
+show_site() {
+  local port="${HUGO_PORT:-1313}"
+  if command -v lsof >/dev/null 2>&1 && lsof -iTCP:"$port" -sTCP:LISTEN >/dev/null 2>&1; then
+    port=1314
+  fi
+  exec hugo server -D --port "$port"
+}
+
+if [[ "$mode" == "--load" || "$mode" == "--reload" ]]; then
+  if [[ $# -lt 2 ]]; then
+    echo "Error: $mode requires a Markdown file path." >&2
+    usage >&2
+    exit 2
+  fi
+
+  note="$2"
+  if [[ "$mode" == "--reload" ]]; then
+    python3 scripts/load_obsidian_note.py "$note" --overwrite
+  else
+    python3 scripts/load_obsidian_note.py "$note"
+  fi
+  shift 2
+  mode="${1:---show}"
+fi
+
+if [[ "$mode" == "--unload" ]]; then
+  if [[ $# -lt 2 ]]; then
+    echo "Error: --unload requires a Markdown file path." >&2
+    usage >&2
+    exit 2
+  fi
+
+  note="$2"
+  python3 scripts/unload_obsidian_note.py "$note"
+  shift 2
+  mode="${1:---done}"
+fi
+
 case "$mode" in
+  --done)
+    ;;
   --show)
     require_hugo
-    exec hugo server -D
+    show_site
     ;;
   --upload)
     require_hugo

@@ -2,3 +2,29 @@ baseURL = 'https://sswaccount.github.io/'
 locale = 'zh-cn'
 title = 'SswSpace'
 theme = 'hugo-theme-stack'
+hasCJKLanguage = true
+
+[pagination]
+pagerSize = 10
+
+[permalinks]
+post = "/p/:slug/"
+page = "/:slug/"
+
+[params]
+mainSections = ["post"]
+rssFullContent = true
+
+[params.sidebar]
+subtitle = "Notes, research, and records."
+
+[params.widgets]
+homepage = [
+  { type = "search" },
+  { type = "archives", params = { limit = 5 } },
+  { type = "categories", params = { limit = 10 } },
+  { type = "tag-cloud", params = { limit = 20 } },
+]
+page = [
+  { type = "toc" },
+]
