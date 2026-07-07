@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+mode="${1:---show}"
+
+usage() {
+  cat <<'EOF'
+Usage:
+  ./build          Start local Hugo preview
+  ./build --show   Start local Hugo preview
+  ./build --upload Build, commit changes, and push current branch
+EOF
+}
+
+require_hugo() {
+  if ! command -v hugo >/dev/null 2>&1; then
+    echo "Error: hugo is not installed or not in PATH." >&2
+    exit 1
+  fi
+}
+
+current_branch() {
+  git branch --show-current
+}
+
+case "$mode" in
+  --show)
+    require_hugo
+    exec hugo server -D
+    ;;
+  --upload)
+    require_hugo
+
+    branch="$(current_branch)"
+    if [[ -z "$branch" ]]; then
+      echo "Error: not on a named git branch." >&2
+      exit 1
+    fi
+
+    hugo
+
+    if [[ -n "$(git status --porcelain)" ]]; then
+      git add -A
+      git commit -m "Build site"
+    else
+      echo "No local changes to commit."
+    fi
+
+    git push origin "$branch"
+    ;;
+  -h|--help)
+    usage
+    ;;
+  *)
+    echo "Unknown option: $mode" >&2
+    usage >&2
+    exit 2
+    ;;
+esac
