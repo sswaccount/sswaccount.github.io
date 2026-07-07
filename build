@@ -2,6 +2,7 @@
 set -euo pipefail
 
 mode="${1:---show}"
+export HUGO_CACHEDIR="${HUGO_CACHEDIR:-$PWD/resources/_gen}"
 
 usage() {
   cat <<'EOF'
