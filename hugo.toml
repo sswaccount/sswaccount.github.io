@@ -4,6 +4,13 @@ title = 'SswSpace'
 theme = 'hugo-theme-stack'
 hasCJKLanguage = true
 
+[markup.goldmark.extensions.passthrough]
+enable = true
+
+[markup.goldmark.extensions.passthrough.delimiters]
+block = [["\\[", "\\]"], ["$$", "$$"]]
+inline = [["\\(", "\\)"]]
+
 [pagination]
 pagerSize = 10
 
