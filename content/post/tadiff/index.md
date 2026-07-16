@@ -7,4 +7,4 @@ tags:
 - todo
 draft: false
 ---
-test
+[文章链接](https://arxiv.org/pdf/2605.14422)
