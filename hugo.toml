@@ -18,6 +18,9 @@ rssFullContent = true
 [params.sidebar]
 subtitle = "Notes, research, and records."
 
+[params.article]
+math = true
+
 [params.widgets]
 homepage = [
   { type = "search" },
