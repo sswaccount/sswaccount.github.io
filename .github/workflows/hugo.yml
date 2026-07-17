@@ -46,6 +46,37 @@ jobs:
         with:
           path: ./public
 
+      - name: Build China mirror
+        run: |
+          hugo \
+            --gc \
+            --minify \
+            --baseURL "https://blog.pianobuddy.site/" \
+            --destination public-cn
+
+      - name: Configure deployment SSH
+        env:
+          CN_SSH_PRIVATE_KEY: ${{ secrets.CN_SSH_PRIVATE_KEY }}
+          CN_SSH_HOST: ${{ secrets.CN_SSH_HOST }}
+          CN_SSH_PORT: ${{ secrets.CN_SSH_PORT }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$CN_SSH_PRIVATE_KEY" > ~/.ssh/blog_deploy_key
+          chmod 600 ~/.ssh/blog_deploy_key
+          ssh-keyscan -p "$CN_SSH_PORT" -H "$CN_SSH_HOST" >> ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Deploy China mirror
+        env:
+          CN_SSH_HOST: ${{ secrets.CN_SSH_HOST }}
+          CN_SSH_PORT: ${{ secrets.CN_SSH_PORT }}
+          CN_SSH_USER: ${{ secrets.CN_SSH_USER }}
+        run: |
+          rsync -az --delete \
+            -e "ssh -i ~/.ssh/blog_deploy_key -p ${CN_SSH_PORT}" \
+            ./public-cn/ \
+            "${CN_SSH_USER}@${CN_SSH_HOST}:/root/data/blog/site/"
+
   deploy:
     environment:
       name: github-pages
